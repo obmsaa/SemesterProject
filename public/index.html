@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SilverPalate</title>
+    <link href="/css/register.css" rel="stylesheet" />
+    <!-- Defered to have it run after the javascript -->
+    <script defer src="../js/register.js"></script>
+
 </head>
 
 
@@ -12,52 +16,18 @@
 
     <h1>Silver Palate</h1>
 
-    <div >
-        Name : <input type="text" id="name"><br>
-        Email: <input type="email" id="email"><br />
-        Password: <input type="password" id="pswHash"><br />
-        <button id="createUserButton">Create User</button>
-    </div>
+    <form id="regForm" >
+        <h2>Register</h2>
 
-    <script>
+        <input type="text" id="name" placeholder="Name"><br>
+        <input type="email" id="email" placeholder="Email"> <br />
+        <input type="password" id="pswHash" placeholder="Password" type="password"><br />
+        <button id="regButton"  type="submit" >Create User</button>
+        <button id="loginButton"  type="button" >Already a user?</button>
 
+    </form>
 
-
-
-        const createUserButton = document.getElementById("createUserButton");
-
-        createUserButton.onclick = async function (e) {
-
-            const name = document.getElementById("name").value;
-            const email = document.getElementById("email").value;
-            const pswHash = document.getElementById("pswHash").value;
-
-            const user = { name, email, pswHash };
-
-            const respon = await postTo("/user", user);
-
-
-
-
-        }
-
-
-        async function postTo(url, data) {
-            const header = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            };
-
-
-            const respon = await fetch(url, header);
-            return respon;
-        }
-
-    </script>
-
+ 
 </body>
 
 </html>

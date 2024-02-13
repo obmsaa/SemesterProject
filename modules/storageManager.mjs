@@ -29,7 +29,7 @@ class DBManager {
             const output = await client.query('Update "public"."Users" set "name" = $1, "email" = $2, "password" = $3 where id = $4;', [user.name, user.email, user.pswHash, user.id]);
 
             // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
-            // Of special intrest is the rows and rowCount properties of this object.
+            // Of special interest is the rows and rowCount properties of this object.
 
             //TODO Did we update the user?
 
