@@ -2,6 +2,7 @@ import express from "express";
 import User from "../modules/user.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
+import DBManager from "../modules/storageManager.mjs";
 
 
 
@@ -11,18 +12,36 @@ USER_API.use(express.json()); // This makes it so that express parses all incomi
 
 const users = [];
 
+
+
 USER_API.get('/', (req, res, next) => {
     SuperLogger.log("Demo of logging tool");
     SuperLogger.log("An important msg", SuperLogger.LOGGING_LEVELS.CRTICAL);
 })
 
-USER_API.get('/:id', (req, res, next) => {
 
-    // Tip: All the information you need to get the id part of the request can be found in the documentation 
-    // https://expressjs.com/en/guide/routing.html (Route parameters)
 
-    /// TODO: 
-    // Return user object
+USER_API.get('/:id', async (req, res, next) => {
+
+   
+
+    const userId = req.params.id;
+
+  try {
+    const user = await DBManager.findUserById(userId);
+    SuperLogger.log(`User found: ${!!user}`)
+    if (!user) {
+        //404 Error for when it doesn't find the user by id
+      return res.status(HTTPCodes.ClientSideErrorRespons.NotFound).end();
+    }
+    res.status(HTTPCodes.SuccesfullRespons.Ok).json(user).end();
+  } catch (error) {
+    throw new Error(error);
+
+  }
+
+   
+
 })
 
 USER_API.post('/', async (req, res, next) => {
