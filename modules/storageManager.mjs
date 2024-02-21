@@ -1,5 +1,6 @@
 import pg from "pg"
 import SuperLogger from "./SuperLogger.mjs";
+import { HTTPCodes } from "./httpConstants.mjs";
 
 // We are using an enviorment variable to get the db credentials 
 if (process.env.DB_CONNECTIONSTRING == undefined) {
@@ -19,6 +20,30 @@ class DBManager {
         };
 
     }
+
+
+    async findUserById(userId) {
+        const client = new pg.Client(this.#credentials);
+
+        try {
+          await client.connect();
+          const result = await client.query('SELECT * FROM "public"."users" WHERE id = $1', [userId]);
+      
+          if (result.rows.length === 0) {
+            return null;
+          }
+      
+          const user = result.rows[0];
+      
+          return user;
+        } catch (error) {
+          console.error('Error finding user:', error);
+          throw error; // Re-throw for handling in API endpoint
+        } finally {
+          await client.end();
+        }
+      }
+
 
     async updateUser(user) {
 
