@@ -1,38 +1,19 @@
 
+import SuperLogger from "./SuperLogger.mjs";
 import DBManager from "./storageManager.mjs";
-
-/*  
-// If you dont want to use class, this is one alternative
-
-const User = function () {
-  return {
-    email: "",
-    pswHash: "",
-    name: "",
-    id: null,
-    save: Save,
-  };
-
-  function Save() {
-    console.log(this.name);
-  }
-};
-
-}*/
+import USER_API from "../routes/usersRoute.mjs";
 
 
 class User {
 
  
-  constructor() {
+  constructor({ name, email, password, role }) {
     this.id;
-    this.name;
-    this.email;
-    this.password;
-    this.role
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.role = role;
   }
-
-
 
 
   async save() {
@@ -41,7 +22,9 @@ class User {
 
     // We know that if a user object dos not have the ID, then it cant be in the DB.
     if (this.id == null) {
-      return await DBManager.createUser(this);
+
+      return await DBManager.createUser(this) ;
+
     } else {
       return await DBManager.updateUser(this);
     }
