@@ -1,8 +1,9 @@
-import express from "express";
+import express, { json } from "express";
 import User from "../modules/user.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
 import DBManager from "../modules/storageManager.mjs";
+
 
 
 
@@ -15,23 +16,23 @@ const users = [];
 
 
 USER_API.get('/', (req, res, next) => {
-    SuperLogger.log("Demo of logging tool");
-    SuperLogger.log("An important msg", SuperLogger.LOGGING_LEVELS.CRTICAL);
+  SuperLogger.log("Demo of logging tool");
+  SuperLogger.log("An important msg", SuperLogger.LOGGING_LEVELS.CRTICAL);
 })
 
 
 
 USER_API.get('/:id', async (req, res, next) => {
 
-   
 
-    const userId = req.params.id;
 
+  const userId = req.params.id;
+  
   try {
     const user = await DBManager.findUserById(userId);
     SuperLogger.log(`User found: ${!!user}`)
     if (!user) {
-        //404 Error for when it doesn't find the user by id
+      //404 Error for when it doesn't find the user by id
       return res.status(HTTPCodes.ClientSideErrorRespons.NotFound).end();
     }
     res.status(HTTPCodes.SuccesfullRespons.Ok).json(user).end();
@@ -40,54 +41,61 @@ USER_API.get('/:id', async (req, res, next) => {
 
   }
 
-   
+
 
 })
 
-USER_API.post('/', async (req, res, next) => {
+USER_API.post('/', async (req, res, next) => { 
 
-    // This is using javascript object destructuring.
-    // Recomend reading up https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#syntax
-    // https://www.freecodecamp.org/news/javascript-object-destructuring-spread-operator-rest-parameter/
-    const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
 
-    if (name != "" && email != "" && password != "") {
-        let user = new User();
-        user.name = name;
-        user.email = email;
-        user.role = role;
+ 
 
-        ///TODO: Do not save passwords.
-        user.pswHash = password;
+  const role = 'user';
 
-        ///TODO: Does the user exist?
-        let exists = false;
+  if (!name || !email|| !password ) {
+  return res.status(HTTPCodes.BadRequest).send("Missing required fields.");
+  }
 
-        if (!exists) {
-            //TODO: What happens if this fails?
-            user = await user.save();
-            res.status(HTTPCodes.SuccesfullRespons.Ok).json(JSON.stringify(user)).end();
-        } else {
-            res.status(HTTPCodes.ClientSideErrorRespons.BadRequest).end();
-        }
+  try {
+    const userExists = await DBManager.checkUserExists(email);
+    
 
-    } else {
-        res.status(HTTPCodes.ClientSideErrorRespons.BadRequest).send("Mangler data felt").end();
-    }
+    if (userExists) {
+      return res.status(HTTPCodes.ClientSideErrorRespons.Conflict).send("User Already Exists", userExists);
+    } 
+
+
+    let user = new User({
+      name: name,
+      email: email,     
+      role: role,       
+      password: password
+    });
+
+      await user.save();
+
+    res.status(HTTPCodes.SuccesfullRespons.Created).json(user).end();
+    console.log("Registration successful", user, HTTPCodes.SuccesfullRespons.Created);
+  } catch(error) {
+
+    res.status(HTTPCodes.ServerErrorRespons.InternalError).send("Failed to register user.");
+    
+  }
 
 });
 
 
 USER_API.put('/:id', (req, res) => {
-     /// TODO: Edit user
-     const user = new User(); //TODO: The user info comes as part of the request 
-     user.save();
+  /// TODO: Edit user
+  const user = new User(); //TODO: The user info comes as part of the request 
+  user.save();
 })
 
 USER_API.delete('/:id', (req, res) => {
-     /// TODO: Delete user.
-     const user = new User(); //TODO: Actual user
-     user.delete();
+  /// TODO: Delete user.
+  const user = new User(); //TODO: Actual user
+  user.delete();
 })
 
 export default USER_API
