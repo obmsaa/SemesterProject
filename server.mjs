@@ -7,6 +7,8 @@ import SuperLogger from './modules/SuperLogger.mjs';  //Logging middleware
 
 // Creating an instance of the server
 const server = express();
+server.use(express.json()); 
+
 // Selecting a port for the server to use.
 const port = (process.env.PORT || 8080);
 server.set('port', port);
@@ -20,6 +22,7 @@ server.use(logger.createAutoHTTPRequestLogger()); // Will logg all http method r
 
 // Defining a folder that will contain static files.
 server.use(express.static('public'));
+
 
 
 // Telling the server to use the USER_API (all urls that uses this code will have to have the /user after the base address)
