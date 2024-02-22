@@ -38,12 +38,28 @@ class DBManager {
           return user;
         } catch (error) {
           console.error('Error finding user:', error);
-          throw error; // Re-throw for handling in API endpoint
+          throw new Error(error); // Re-throw for handling in API endpoint
         } finally {
           await client.end();
         }
       }
 
+      async checkUserExists(email) {
+        const client = new pg.Client(this.#credentials);
+
+        try {
+            await client.connect();
+
+            const result = await client.query('SELECT * FROM "public"."users" WHERE email = $1', [email]);
+            
+            return result.rows.length > 0; // Returning true if user exists, false otherwise
+        } catch (error) {
+            console.error('Error checking user existence:', error);
+            throw new Error("Error: ", error);
+        } finally {
+            await client.end();
+        }
+    }
 
     async updateUser(user) {
 
@@ -51,7 +67,7 @@ class DBManager {
 
         try {
             await client.connect();
-            const output = await client.query('Update "public"."Users" set "name" = $1, "email" = $2, "password" = $3 where id = $4;', [user.name, user.email, user.pswHash, user.id]);
+            const output = await client.query('Update "public"."Users" set "name" = $1, "email" = $2, "password" = $3 where id = $4;', [user.name, user.email, user.password, user.id]);
 
             // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
             // Of special interest is the rows and rowCount properties of this object.
@@ -91,26 +107,32 @@ class DBManager {
     }
 
     async createUser(user) {
-
         const client = new pg.Client(this.#credentials);
+        console.log("Create user test. Heres the user: ", JSON.stringify(user))
 
         try {
-            await client.connect();
-            const output = await client.query('INSERT INTO "public"."Users"("name", "email", "password") VALUES($1::Text, $2::Text, $3::Text) RETURNING id;', [user.name, user.email, user.pswHash]);
 
-            // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
-            // Of special intrest is the rows and rowCount properties of this object.
+            await client.connect();
+            console.log("Connected to the database successfully.");
+
+            const output = await client.query('INSERT INTO "public"."users"("name", "email", "password", "role") VALUES($1::Text, $2::Text, $3::Text, $4::Text) RETURNING id;', [user.name, user.email, user.password, user.role]);
+            console.log("Query executed, result: " + JSON.stringify(output));
+            
 
             if (output.rows.length == 1) {
                 // We stored the user in the DB.
                 user.id = output.rows[0].id;
+                return user;
+            } else{
+                SuperLogger.log("User was not created. No rows returned.");
             }
 
         } catch (error) {
-            console.error(error);
+            SuperLogger.log("User insertion failed with error: " + error.message);
             //TODO : Error handling?? Remember that this is a module seperate from your server 
         } finally {
             client.end(); // Always disconnect from the database.
+            SuperLogger.log("Database connection closed.");
         }
 
         return user;
@@ -120,7 +142,8 @@ class DBManager {
 }
 
 
-
+ // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
+            // Of special intrest is the rows and rowCount properties of this object.
 
 
 
