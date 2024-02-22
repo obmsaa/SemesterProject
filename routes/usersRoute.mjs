@@ -49,12 +49,13 @@ USER_API.post('/', async (req, res, next) => {
     // This is using javascript object destructuring.
     // Recomend reading up https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#syntax
     // https://www.freecodecamp.org/news/javascript-object-destructuring-spread-operator-rest-parameter/
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (name != "" && email != "" && password != "") {
         let user = new User();
         user.name = name;
         user.email = email;
+        user.role = role;
 
         ///TODO: Do not save passwords.
         user.pswHash = password;
