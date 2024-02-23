@@ -108,7 +108,7 @@ class DBManager {
 
     async createUser(user) {
         const client = new pg.Client(this.#credentials);
-        console.log("Create user test. Heres the user: ", JSON.stringify(user))
+        console.log("New user: ", JSON.stringify(user))
 
         try {
 
