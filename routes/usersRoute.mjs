@@ -3,7 +3,7 @@ import User from "../modules/user.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
 import DBManager from "../modules/storageManager.mjs";
-
+import hash from "../modules/pswHasher.mjs";
 
 
 
@@ -65,12 +65,15 @@ USER_API.post('/', async (req, res, next) => {
       return res.status(HTTPCodes.ClientSideErrorRespons.Conflict).send("User Already Exists", userExists);
     } 
 
-
+    //Hash the password before storing
+    let pswHash = hash(password);
+    
+    
     let user = new User({
       name: name,
       email: email,     
       role: role,       
-      password: password
+      password: pswHash
     });
 
       await user.save();
