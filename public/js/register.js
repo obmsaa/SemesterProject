@@ -6,6 +6,7 @@ const regForm = document.getElementById("regForm");
   
 //Eventlistener for registering a user
 regForm.addEventListener("submit", async function (event) {
+
     event.preventDefault();
 
    
