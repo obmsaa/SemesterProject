@@ -5,5 +5,4 @@ node_modules/
 readme.md
 log.txt
 package-lock.json
-package.json
 pswHasher.mjs
