@@ -11,7 +11,8 @@ const route = (event) => {
 
 const routes = {
     "/": "home.html",
-    "/register": "/register.html"
+    "/register": "/register.html",
+    "/login": "/login.html"
 };
 
 
@@ -25,8 +26,31 @@ const handleLocation = async() => {
         if (!response.ok){
             throw new Error(`HTTP error! status: ${response.status}`)
         }
-        const html = await response.text();
-       content.innerHTML = html;
+        let html = await response.text();
+
+        //Removing script tags from HTML to execute them again separately
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        const scripts = div.querySelectorAll('script');
+        scripts.forEach((script) => {
+            div.removeChild(script);
+        });
+
+        //Update the content div
+        content.innerHTML = div.innerHTML
+
+        //Reload scripts
+        scripts.forEach((script) => {
+            const newScript = document.createElement('script');
+            if (script.src) {
+                newScript.src = script.src;
+            }else {
+                newScript.textContent = script.textContent;
+            }
+            document.body.appendChild(newScript);
+        });
+
+
     } catch (error) {
         console.error('Fetch error: ', error);
     }
