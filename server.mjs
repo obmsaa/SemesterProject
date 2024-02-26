@@ -2,12 +2,11 @@ import 'dotenv/config'
 import express from 'express' // Express is installed using npm
 import USER_API from './routes/usersRoute.mjs'; // This is where we have defined the API for working with users.
 import SuperLogger from './modules/SuperLogger.mjs';  //Logging middleware
-
+import RECIPE_API from './routes/recipeRoute.mjs';
 
 
 // Creating an instance of the server
 const server = express();
-server.use(express.json()); 
 
 // Selecting a port for the server to use.
 const port = (process.env.PORT || 8080);
@@ -27,6 +26,10 @@ server.use(express.static('public'));
 
 // Telling the server to use the USER_API (all urls that uses this code will have to have the /user after the base address)
 server.use("/user", USER_API);
+
+
+// Telling the server to use the RECIPE_API (all urls that uses this code will have to have the /recipe after the base address)
+server.use("/recipes", RECIPE_API);
 
 
 // A get request handler example)
