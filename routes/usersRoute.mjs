@@ -15,11 +15,6 @@ const users = [];
 
 
 
-USER_API.get('/', (req, res, next) => {
-  SuperLogger.log("Demo of logging tool");
-  SuperLogger.log("An important msg", SuperLogger.LOGGING_LEVELS.CRTICAL);
-})
-
 
 
 USER_API.get('/:id', async (req, res, next) => {
