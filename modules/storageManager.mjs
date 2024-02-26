@@ -139,6 +139,29 @@ class DBManager {
 
     }
 
+
+    async findRecipes() {
+        const client = new pg.Client(this.#credentials);
+    
+        try {
+            await client.connect();
+            const result = await client.query('SELECT * FROM "public"."recipes"'); // Adjust SQL query to select from recipes table
+          
+            if (result.rows.length === 0) {
+                return []; // Return an empty array if no recipes are found
+            }
+          
+            const recipes = result.rows; // Assign the result rows to recipes
+          
+            return recipes; // Return the array of recipes
+        } catch (error) {
+            console.error('Error finding recipes:', error);
+            throw new Error(error); // Re-throw for handling in API endpoint
+        } finally {
+            await client.end();
+        }
+    }
+
 }
 
 
