@@ -1,6 +1,9 @@
 import pg from "pg"
 import SuperLogger from "./SuperLogger.mjs";
 import { HTTPCodes } from "./httpConstants.mjs";
+import hash from "./pswHasher.mjs";
+
+
 
 // We are using an enviorment variable to get the db credentials 
 if (process.env.DB_CONNECTIONSTRING == undefined) {
@@ -60,6 +63,42 @@ class DBManager {
             await client.end();
         }
     }
+
+    async checkUserLogin(email, password) {
+        const client = new pg.Client(this.#credentials);
+
+        try {
+            await client.connect();
+            SuperLogger.log("Checking user login..");
+            SuperLogger.log("Password:" + password)
+
+            const result = await client.query('SELECT password FROM "public"."users" WHERE email = $1', [email]);
+            SuperLogger.log("Result:" + JSON.stringify(result))
+
+            if (result.rows.length > 0) {
+
+                const user = result.rows[0];
+                SuperLogger.log("User:" + JSON.stringify(user))
+                // Hashing the input password using the same method as when storing it
+                const inputHash = hash(password);
+                SuperLogger.log("Hashed Password:" + inputHash)
+                // Compare the input hash with the stored hash
+                if (inputHash === user.password) {
+                  return true; // Passwords match
+                }
+              }
+              return false; // No user found, or passwords do not match
+        } catch (error) {
+            console.log('Error checking user existence:', error);
+            SuperLogger.log("Error here");
+
+            throw new Error("Error: ", error);
+        } finally {
+            await client.end();
+        }
+    }
+
+    
 
     async updateUser(user) {
 
