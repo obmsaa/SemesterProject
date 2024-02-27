@@ -47,10 +47,6 @@ LOGIN_API.post('/', async (req, res, next) => {
 
 });
 
-function logoutUser(){
-    localStorage.removeItem('authToken');
-
-};
 
 export default LOGIN_API
 
