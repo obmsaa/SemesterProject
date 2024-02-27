@@ -80,3 +80,14 @@ nav ul li a {
     width: auto;
     height: 2.5vh;
 }
+
+
+footer {
+    text-align: center;
+    width: 100%;
+    background-color: transparent;
+    box-shadow: none;
+    position:relative;
+    bottom: 0; 
+
+}

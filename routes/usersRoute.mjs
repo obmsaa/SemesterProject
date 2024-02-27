@@ -11,9 +11,6 @@ import hash from "../modules/pswHasher.mjs";
 const USER_API = express.Router();
 USER_API.use(express.json()); // This makes it so that express parses all incoming payloads as JSON for this route.
 
-const users = [];
-
-
 
 
 
@@ -63,7 +60,6 @@ USER_API.post('/', async (req, res, next) => {
     //Hash the password before storing
     let pswHash = hash(password);
     
-    
     let user = new User({
       name: name,
       email: email,     
@@ -84,6 +80,7 @@ USER_API.post('/', async (req, res, next) => {
 });
 
 
+
 USER_API.put('/:id', (req, res) => {
   /// TODO: Edit user
   const user = new User(); //TODO: The user info comes as part of the request 
@@ -97,3 +94,4 @@ USER_API.delete('/:id', (req, res) => {
 })
 
 export default USER_API
+

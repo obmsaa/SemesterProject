@@ -1,7 +1,6 @@
 
 import SuperLogger from "./SuperLogger.mjs";
 import DBManager from "./storageManager.mjs";
-import USER_API from "../routes/usersRoute.mjs";
 
 
 class User {
