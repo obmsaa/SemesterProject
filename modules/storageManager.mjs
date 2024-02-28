@@ -21,7 +21,7 @@ class DBManager {
 
 
     constructor() {
-        const isRenderEnvironment = Boolean(process.env.DB_RENDER_CONNECTIONSTRING);
+        const isRenderEnvironment = Boolean(process.env.DB_CONNECTIONSTRING_RENDER);
         const connectionString = isRenderEnvironment ? process.env.DB_CONNECTIONSTRING_RENDER : process.env.DB_CONNECTIONSTRING_LOCAL;
         const ssl = isRenderEnvironment ? { rejectUnauthorized: true } : false;
         
