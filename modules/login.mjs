@@ -22,15 +22,13 @@ LOGIN_API.post('/', async (req, res, next) => {
   }
 
   try {
-    const userAuthenticated = await DBManager.checkUserLogin(email, password);
+    const {userAuthenticated, token} = await DBManager.checkAndSignIn(email, password);
     SuperLogger.log("Auth Result: ", userAuthenticated);
 
     if (userAuthenticated) {
-        SuperLogger.log("USER AUTHENTICATED!!!")
 
-      const secret = process.env.ACCESS_TOKEN_SECRET;
-      const token = jwt.sign({ email }, secret, { expiresIn: '3h' });
     SuperLogger.log("Here is token:", token)
+
       return res.status(HTTPCodes.SuccesfullRespons.Ok).send({ token });
 
     } else {

@@ -2,11 +2,12 @@ import pg from "pg"
 import SuperLogger from "./SuperLogger.mjs";
 import { HTTPCodes } from "./httpConstants.mjs";
 import hash from "./pswHasher.mjs";
+import { giveToken } from "./authenticator";
 
 
 
 // We are using an enviorment variable to get the db credentials 
-if (process.env.DB_CONNECTIONSTRING == undefined) {
+if (process.env.DB_CONNECTIONSTRING_LOCAL == undefined) {
     throw ("You forgot the db connection string");
 }
 
@@ -14,12 +15,21 @@ if (process.env.DB_CONNECTIONSTRING == undefined) {
 
 class DBManager {
 
+
+
     #credentials = {};
 
-    constructor(connectionString) {
+
+    constructor() {
+        const isRenderEnvironment = Boolean(process.env.DB_RENDER_CONNECTIONSTRING);
+        const connectionString = isRenderEnvironment ? process.env.DB_CONNECTIONSTRING_RENDER : process.env.DB_CONNECTIONSTRING_LOCAL;
+        const ssl = isRenderEnvironment ? { rejectUnauthorized: true } : false;
+        
+
+
         this.#credentials = {
             connectionString,
-            ssl: (process.env.DB_SSL === "true") ? process.env.DB_SSL : false
+            ssl
         };
 
     }
@@ -64,30 +74,29 @@ class DBManager {
         }
     }
 
-    async checkUserLogin(email, password) {
+    async checkAndSignIn(email, password) {
         const client = new pg.Client(this.#credentials);
 
         try {
             await client.connect();
-            SuperLogger.log("Checking user login..");
-            SuperLogger.log("Password:" + password)
-
-            const result = await client.query('SELECT password FROM "public"."users" WHERE email = $1', [email]);
-            SuperLogger.log("Result:" + JSON.stringify(result))
+            
+            const result = await client.query('SELECT id, password FROM "public"."users" WHERE email = $1', [email]);
 
             if (result.rows.length > 0) {
 
                 const user = result.rows[0];
-                SuperLogger.log("User:" + JSON.stringify(user))
+
                 // Hashing the input password using the same method as when storing it
                 const inputHash = hash(password);
-                SuperLogger.log("Hashed Password:" + inputHash)
                 // Compare the input hash with the stored hash
                 if (inputHash === user.password) {
-                  return true; // Passwords match
+                    const userId = user.id;
+                    giveToken(userId);
+
+                  return {authenticated: true, token}; //Sending as an object to send two things.
                 }
               }
-              return false; // No user found, or passwords do not match
+              return { authenticated: false }; // No user found, or passwords do not match, Keeping consistent return structure even though its one thing.
         } catch (error) {
             console.log('Error checking user existence:', error);
             SuperLogger.log("Error here");
