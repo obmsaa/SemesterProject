@@ -12,12 +12,18 @@ const route = (event) => {
 const routes = {
     "/": "home.html",
     "/register": "/register.html",
-    "/login": "/login.html"
+    "/login": "/login.html",
+    "/myHome": "/myHome.html",
+    "/myRecipes": "/myRecipes.html",
+    "/myShopping": "/myShopping.html",
+    "/myProfile": "/myHome.html",
+
+
 };
 
 
 
-const handleLocation = async() => {
+async function handleLocation() {
     const path = window.location.pathname;
 
     const routePath = routes[path] || routes['/'];
@@ -62,3 +68,4 @@ window.onpopstate = handleLocation;
 window.route = route;
 
 handleLocation();
+

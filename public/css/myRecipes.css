@@ -9,6 +9,9 @@ body {
     font-family: 'San Francisco', 'Helvetica Neue', Arial, sans-serif;
 }
 
+#pageTitle{
+    text-align: center;
+}
 
 #main {
     display: flex;
@@ -37,7 +40,6 @@ body {
     text-decoration: underline;
     font-weight: bold;
 }
-
 
 
 footer {

@@ -1,7 +1,7 @@
 // Function to fetch recipes and display them
 async function displayRecipes() {
     try {
-      const response = await getFrom('/recipes'); // Adjust the endpoint as necessary
+      const response = await getFrom('/recipes'); 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -20,9 +20,9 @@ async function displayRecipes() {
         ingredientsList += '</ul>';
         recipeEl.innerHTML = `
           <h3>${recipe.title}</h3>
-          <p>${recipe.description}</p>
+          <p class="recipeDesc">${recipe.description}</p>
           ${ingredientsList}
-          <p>${recipe.instructions}</p>
+          <p class="recipeInstruct">${recipe.instructions}</p>
         `;
         container.appendChild(recipeEl);
       });
@@ -31,7 +31,7 @@ async function displayRecipes() {
     }
 }
 
-// Call the function to load and display recipes
+// Calling the function to load and display recipes
 displayRecipes();
 
 

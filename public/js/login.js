@@ -3,9 +3,9 @@
 
 const loginForm = document.getElementById("loginForm");
 
-loginForm.addEventListener("submit", async function (evt) {
+loginForm.addEventListener("submit", async function (event) {
 
-  evt.preventDefault();
+  event.preventDefault();
   const email = loginForm.email.value;
   const password = loginForm.password.value;
   const data = { email, password };
@@ -23,7 +23,9 @@ loginForm.addEventListener("submit", async function (evt) {
       const { token } = await response.json();
       console.log("Login successful, token:", token);
       localStorage.setItem('authToken', token);
-
+      updateHeader();
+      window.history.pushState({}, "", "/myHome");
+      handleLocation();
     } else {
       console.log("Login failed:", response.statusText);
     }

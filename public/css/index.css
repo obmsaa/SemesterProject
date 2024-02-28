@@ -14,15 +14,10 @@ body {
     font-family: 'San Francisco', 'Helvetica Neue', Arial, sans-serif;
 }
 
-h1, h2 {
-    color: #d95d39; 
-}
-
 #title {
-    padding-top: 1rem;
     text-align: center;
-    font-size: 30px;
     color: #d95d39;
+    margin: 1rem;
 }
 
 header {
@@ -44,6 +39,12 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: #333;
+    color: #000000;
     font-weight: bold;
+}
+
+.link:hover{
+    text-decoration: underline;
+    height: 1rem;
+    
 }
