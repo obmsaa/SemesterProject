@@ -22,6 +22,17 @@ RECIPE_API.get('/', async (req, res, next) => {
   }
 });
 
+//Get recipes for a specific user
+RECIPE_API.get('/user/:userId', async (req, res, next) => {
+  
+  try {
+    const recipes = await DBManager.findRecipes();
+    res.status(HTTPCodes.SuccesfullRespons.Ok).json(recipes);
+  } catch (error) {
+    res.status(HTTPCodes.ServerErrorRespons.InternalError).send('Could not fetch recipes.');
+  }
+});
+
 
 
 RECIPE_API.post('/', async (req, res, next) => { 
