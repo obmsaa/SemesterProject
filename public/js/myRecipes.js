@@ -1,4 +1,4 @@
-import { verifyToken } from "../../modules/authenticator";
+import { verifyToken } from "../../modules/authenticator.mjs";
 
 
 // Function to fetch recipes and display them

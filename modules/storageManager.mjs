@@ -2,7 +2,7 @@ import pg from "pg"
 import SuperLogger from "./SuperLogger.mjs";
 import { HTTPCodes } from "./httpConstants.mjs";
 import hash from "./pswHasher.mjs";
-import { giveToken } from "./authenticator";
+import { giveToken } from "./authenticator.mjs";
 
 
 
