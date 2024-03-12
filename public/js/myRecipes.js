@@ -1,19 +1,16 @@
-import { verifyToken } from "../../modules/authenticator.mjs";
 
 
 // Function to fetch recipes and display them
 async function displayMyRecipes() {
+  console.log("Display recipes is running")
+
     try {
-      let token = localStorage.getItem("authtoken");
-
-      const {userAuthenticated, userId} = verifyToken(token);
-
-      if(!userAuthenticated) {
-        throw new Error(`Token is invalid`);
-
-      };
-
-      const response = await getFrom(`/recipes/user/${userId}`);
+      let token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("No token found or available");
+      }
+     
+      const response = await getFrom(`recipes/user/recipes` , token);
 
 
       if (!response.ok) {
@@ -41,7 +38,7 @@ async function displayMyRecipes() {
         container.appendChild(recipeEl);
       });
     } catch (error) {
-      console.error('Error fetching recipes:', error);
+throw new Error("Error in myRecipes.js: ", error)
     }
 }
 
@@ -49,11 +46,16 @@ async function displayMyRecipes() {
 displayMyRecipes();
 
 
-async function getFrom(url){
+async function getFrom(url, token){
+
     let cfg = {
-        method: "GET"
+        method: "GET",
+        headers: {
+            "Authorization": `${token}`
+        }
     };
     console.log('Making GET request to:', url);
     const response = await fetch(url, cfg);
     return response;
 }
+
