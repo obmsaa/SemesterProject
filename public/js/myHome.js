@@ -1,5 +1,5 @@
 // Function to fetch recipes and display them
-async function displayRecipes() {
+async function displayAllRecipes() {
     try {
       const response = await getFrom('/recipes'); 
       if (!response.ok) {
@@ -32,7 +32,7 @@ async function displayRecipes() {
 }
 
 // Calling the function to load and display recipes
-displayRecipes();
+displayAllRecipes();
 
 
 async function getFrom(url){

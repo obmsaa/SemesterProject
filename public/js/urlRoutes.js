@@ -16,7 +16,7 @@ const routes = {
     "/myHome": "/myHome.html",
     "/myRecipes": "/myRecipes.html",
     "/myShopping": "/myShopping.html",
-    "/myProfile": "/myHome.html",
+    "/Profile": "/profile.html",
 
 
 };

@@ -16,9 +16,9 @@ const userHeaderTemplate = `
     <nav>
         <ul>
             <li><a class="link" href="/myHome" onclick="route(event)">Home</a></li>
-            <li><a class="link" href="/myRecpies" onclick="route(event)">My Recipes</a></li>
+            <li><a class="link" href="/myRecipes" onclick="route(event)">My Recipes</a></li>
             <li><a class="link" href="/myShopping" onclick="route(event)">My Shopping list</a></li>
-            <li><a class="link" href="/profile" onclick="route(event)">Profile</a></li>
+            <li><a class="link" href="/Profile" onclick="route(event)">Profile</a></li>
             <li><a class="link" href="/" onclick="logout(event)">Logout</a></li>
         </ul>
     </nav>
