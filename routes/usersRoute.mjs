@@ -4,6 +4,7 @@ import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
 import DBManager from "../modules/storageManager.mjs";
 import hash from "../modules/pswHasher.mjs";
+import { verifyToken } from "../modules/authenticator.mjs";
 
 
 
@@ -14,15 +15,18 @@ USER_API.use(express.json()); // This makes it so that express parses all incomi
 
 
 
-USER_API.get('/:id', async (req, res, next) => {
 
 
+USER_API.get('/profile', async (req, res, next) => {
 
-  const userId = req.params.id;
+  const token = req.headers.authorization;
+
+
+ 
   
   try {
-    const user = await DBManager.findUserById(userId);
-    SuperLogger.log(`User found: ${!!user}`)
+    const userID = verifyToken(token);
+    const user = await DBManager.findUserById(userID);
     if (!user) {
       //404 Error for when it doesn't find the user by id
       return res.status(HTTPCodes.ClientSideErrorRespons.NotFound).end();
@@ -36,6 +40,27 @@ USER_API.get('/:id', async (req, res, next) => {
 
 
 })
+
+USER_API.get('/:id', async (req, res, next) => {
+
+  
+  try {
+   
+    const user = await DBManager.findUserById(userID);
+    if (!user) {
+      //404 Error for when it doesn't find the user by id
+      return res.status(HTTPCodes.ClientSideErrorRespons.NotFound).end();
+    }
+    res.status(HTTPCodes.SuccesfullRespons.Ok).json(user).end();
+  } catch (error) {
+    throw new Error(error);
+
+  }
+
+
+
+})
+
 
 USER_API.post('/', async (req, res, next) => { 
 
