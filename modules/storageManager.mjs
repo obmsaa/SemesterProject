@@ -181,30 +181,37 @@ class DBManager {
     }
 
 
-    async findRecipes() {
+    async findRecipes(userID) {
         const client = new pg.Client(this.#credentials);
-    
         try {
             await client.connect();
-            const result = await client.query('SELECT * FROM "public"."recipes"'); // Adjust SQL query to select from recipes table
-          
+            let query;
+            let queryParams = [];
+    
+            if(userID) {                
+                // Query for specific user
+                query = 'SELECT * FROM "public"."recipes" WHERE created_by = $1';
+                queryParams.push(userID);
+            } else {
+                //Query to get all recipes from everyone
+                query = 'SELECT * FROM "public"."recipes"';
+            }
+    
+            const result = await client.query(query, queryParams);
+            console.log("Result from storage: ", result)
             if (result.rows.length === 0) {
                 return []; // Return an empty array if no recipes are found
             }
-          
-            const recipes = result.rows; // Assign the result rows to recipes
-          
-            return recipes; // Return the array of recipes
+            const recipes = result.rows;
+            
+            return recipes; 
         } catch (error) {
-            console.error('Error finding recipes:', error);
-            throw new Error(error); // Re-throw for handling in API endpoint
+            throw new Error('Error finding recipes:',error); 
         } finally {
             await client.end();
         }
     }
-
 }
-
 
  // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
             // Of special intrest is the rows and rowCount properties of this object.
