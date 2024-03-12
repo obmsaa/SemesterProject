@@ -3,6 +3,7 @@ import Recipe from "../modules/recipe.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
 import DBManager from "../modules/storageManager.mjs";
+import { verifyToken } from "../modules/authenticator.mjs";
 
 
 
@@ -23,10 +24,15 @@ RECIPE_API.get('/', async (req, res, next) => {
 });
 
 //Get recipes for a specific user
-RECIPE_API.get('/user/:userId', async (req, res, next) => {
-  
+RECIPE_API.get('/user/recipes', async (req, res, next) => {
+
+  const token = req.headers.authorization;
+  console.log(token)
+  const userID = verifyToken(token);
+  console.log(userID)
+
   try {
-    const recipes = await DBManager.findRecipes();
+    const recipes = await DBManager.findRecipes(userID);
     res.status(HTTPCodes.SuccesfullRespons.Ok).json(recipes);
   } catch (error) {
     res.status(HTTPCodes.ServerErrorRespons.InternalError).send('Could not fetch recipes.');
