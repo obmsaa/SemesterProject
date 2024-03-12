@@ -20,13 +20,13 @@ export function verifyToken(token){
 
 
         const decoded = jwt.verify(token, secret); 
-        const userId = decoded.userId; // Access the user ID from the decoded payload
-        return {userAuthenticated: true, userId};
+        const userID = decoded.userId; // Access the user ID from the decoded payload
+        return userID;
 
     } catch (error) {
         // Handle errors, such as invalid token or signature
-        console.log('Error decoding JWT:', error);
-        return {userAuthenticated: false};
+        throw new Error('Error decoding JWT:', error);
+        
 
     }
 }
