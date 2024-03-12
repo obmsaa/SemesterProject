@@ -6,10 +6,6 @@ import { giveToken } from "./authenticator.mjs";
 
 
 
-// We are using an enviorment variable to get the db credentials 
-if (process.env.DB_CONNECTIONSTRING_LOCAL == undefined) {
-    throw ("You forgot the db connection string");
-}
 
 /// TODO: is the structure / design of the DBManager as good as it could be?
 
@@ -24,7 +20,6 @@ class DBManager {
         const isRenderEnvironment = Boolean(process.env.DB_CONNECTIONSTRING_RENDER);
         const connectionString = isRenderEnvironment ? process.env.DB_CONNECTIONSTRING_RENDER : process.env.DB_CONNECTIONSTRING_LOCAL;
         const ssl = isRenderEnvironment ? { rejectUnauthorized: true } : false;
-        
 
 
         this.#credentials = {
@@ -74,32 +69,30 @@ class DBManager {
         }
     }
 
-    async checkAndSignIn(email, password) {
+    async checkUserLogin(email, password) {
         const client = new pg.Client(this.#credentials);
-
         try {
             await client.connect();
-            
-            const result = await client.query('SELECT id, password FROM "public"."users" WHERE email = $1', [email]);
+            console.log("client ", client)
 
+           
+            const result = await client.query('SELECT * FROM "public"."users" WHERE email = $1', [email]);
+            // console.log("console Result in storage: ", result.rows[0])
             if (result.rows.length > 0) {
-
-                const user = result.rows[0];
-
+                const user = result.rows[0]; 
                 // Hashing the input password using the same method as when storing it
                 const inputHash = hash(password);
                 // Compare the input hash with the stored hash
                 if (inputHash === user.password) {
-                    const userId = user.id;
-                    giveToken(userId);
-
-                  return {authenticated: true, token}; //Sending as an object to send two things.
+                    console.log("Password matches, user ID:", user.id);
+                    
+                  return user.id; 
                 }
               }
-              return { authenticated: false }; // No user found, or passwords do not match, Keeping consistent return structure even though its one thing.
+              
+              return null; // No user found, or passwords do not match
         } catch (error) {
-            console.log('Error checking user existence:', error);
-            SuperLogger.log("Error here");
+            console.log(' Error checking user existence:', error.message, error.stack);
 
             throw new Error("Error: ", error);
         } finally {
@@ -220,6 +213,6 @@ class DBManager {
 
 
 
-export default new DBManager(process.env.DB_CONNECTIONSTRING);
+export default new DBManager();
 
 //

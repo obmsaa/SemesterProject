@@ -20,9 +20,8 @@ loginForm.addEventListener("submit", async function (event) {
   try {
     const response = await fetch('/login', cfg); 
     if (response.ok) {
-      const { token } = await response.json();
-      console.log("Login successful, token:", token);
-      localStorage.setItem('authToken', token);
+      const data = await response.json();
+      localStorage.setItem('authToken', data.token);
       updateHeader();
       window.history.pushState({}, "", "/myHome");
       handleLocation();
