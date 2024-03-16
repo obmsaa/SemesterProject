@@ -106,12 +106,58 @@ USER_API.post('/', async (req, res, next) => {
 
 
 
+USER_API.put('/edit', async (req, res) => {
+  /// TODO: Edit user
+  const { name, email, password } = req.body;
+
+  const token = req.headers.authorization;
+
+
+  if (!token ) {
+    return res.status(HTTPCodes.BadRequest).send("Missing or invalid token.");
+    }
+
+  try {
+   
+    const userID = verifyToken(token);
+
+    const existingUser = await DBManager.findUserById(userID);
+    if (!existingUser) {
+      return res.status(HTTPCodes.NotFound).send("User not found.");
+    }
+
+    //Hash the password before storing
+    let pswHash = hash(password);
+    
+    let user = new User({
+      id: userID,
+      name: name,
+      email: email,     
+      role: existingUser.role,       
+      password: pswHash
+    });
+
+    const updatedUser = await user.save();
+
+
+    res.status(HTTPCodes.SuccesfullRespons.Ok).json(updatedUser).end();
+    console.log("User edit successful", user, HTTPCodes.SuccesfullRespons.Ok);
+  } catch(error) {
+
+    res.status(HTTPCodes.ServerErrorRespons.InternalError).send("Failed to edit user.");
+    
+  }
+
+
+  
+});
+
+
 USER_API.put('/:id', (req, res) => {
   /// TODO: Edit user
   const user = new User(); //TODO: The user info comes as part of the request 
   user.save();
 })
-
 USER_API.delete('/:id', (req, res) => {
   /// TODO: Delete user.
   const user = new User(); //TODO: Actual user
