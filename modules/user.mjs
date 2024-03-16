@@ -6,8 +6,8 @@ import DBManager from "./storageManager.mjs";
 class User {
 
  
-  constructor({ name, email, password, role }) {
-    this.id;
+  constructor({ id, name, email, password, role }) {
+    this.id = id;
     this.name = name;
     this.email = email;
     this.password = password;
@@ -25,6 +25,7 @@ class User {
       return await DBManager.createUser(this) ;
 
     } else {
+      console.log("Ran update user")
       return await DBManager.updateUser(this);
     }
   }
