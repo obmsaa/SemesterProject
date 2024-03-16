@@ -107,18 +107,28 @@ class DBManager {
         const client = new pg.Client(this.#credentials);
 
         try {
+
             await client.connect();
-            const output = await client.query('Update "public"."Users" set "name" = $1, "email" = $2, "password" = $3 where id = $4;', [user.name, user.email, user.password, user.id]);
 
-            // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
-            // Of special interest is the rows and rowCount properties of this object.
 
-            //TODO Did we update the user?
+            const output = await client.query('UPDATE "public"."users" SET "name" = $1, "email" = $2, "password" = $3 WHERE id = $4;', [user.name, user.email, user.password, user.id]);
+
+            if (output.rowCount === 0) {
+
+                throw new Error(`No user found with ID: ${user.id}`);
+            } else {
+
+            }
+            
 
         } catch (error) {
-            //TODO : Error handling?? Remember that this is a module seperate from your server 
+
+            throw Error("Error updating the database with new user info: " + error);
         } finally {
-            client.end(); // Always disconnect from the database.
+
+            client.end(); 
+       
+
         }
 
         return user;
@@ -172,7 +182,7 @@ class DBManager {
             SuperLogger.log("User insertion failed with error: " + error.message);
             //TODO : Error handling?? Remember that this is a module seperate from your server 
         } finally {
-            client.end(); // Always disconnect from the database.
+            client.end(); 
             SuperLogger.log("Database connection closed.");
         }
 
