@@ -19,7 +19,7 @@ async function displayMyRecipes() {
       const recipes = await response.json();
   
       const container = document.getElementById('recipe-container');
-      container.innerHTML = ''; // Clear existing content
+      container.innerHTML = ''; // Clearing existing content
   
       recipes.forEach(recipe => {
         const recipeEl = document.createElement('div');
@@ -42,7 +42,7 @@ throw new Error("Error in myRecipes.js: ", error)
     }
 }
 
-// Call the function to load and display recipes
+// Calling the function to load and display recipes
 displayMyRecipes();
 
 
