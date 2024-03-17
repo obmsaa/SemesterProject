@@ -17,7 +17,6 @@ const userHeaderTemplate = `
         <ul>
             <li><a class="link" href="/myHome" onclick="route(event)">Home</a></li>
             <li><a class="link" href="/myRecipes" onclick="route(event)">My Recipes</a></li>
-            <li><a class="link" href="/myShopping" onclick="route(event)">My Shopping list</a></li>
             <li><a class="link" href="/Profile" onclick="route(event)">Profile</a></li>
             <li><a class="link" href="/" onclick="logout(event)">Logout</a></li>
         </ul>
@@ -45,5 +44,6 @@ function logout(event) {
     event.preventDefault();
     localStorage.removeItem('authToken'); // Removing the token from storage
     updateHeader(); // Updating the header to reflect logged-out state
-    route(event);
+    //Switch page with the use of route and handlelocation
+    route(event);   
 }
