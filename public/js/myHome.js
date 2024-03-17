@@ -13,21 +13,35 @@ async function displayAllRecipes() {
       recipes.forEach(recipe => {
         const recipeEl = document.createElement('div');
         recipeEl.className = 'recipe';
+      
+       
         let ingredientsList = '<ul>';
         recipe.ingredients.forEach(ingredient => {
-          ingredientsList += `<li>${ingredient}</li>`;
+          ingredientsList += `<li>${ingredient.name}</li>`; 
         });
         ingredientsList += '</ul>';
+      
+        let instructionsList = '<ol>';
+        recipe.instructions.forEach(instruction => {
+          instructionsList += `<li>${instruction.instruction}</li>`; 
+        });
+        instructionsList += '</ol>';
+      
         recipeEl.innerHTML = `
-          <h3>${recipe.title}</h3>
+          <h2>${recipe.title}</h2>
           <p class="recipeDesc">${recipe.description}</p>
+          <h3>Ingredients</h3>
           ${ingredientsList}
-          <p class="recipeInstruct">${recipe.instructions}</p>
+          <h3>Instructions</h3>
+          ${instructionsList}
         `;
+      
         container.appendChild(recipeEl);
       });
+
     } catch (error) {
-      console.error('Error fetching recipes:', error);
+      alert("Error fetching recipes", error)
+      throw new Error('Error fetching recipes:', error);
     }
 }
 
