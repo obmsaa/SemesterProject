@@ -9,7 +9,9 @@ export function giveToken(userId){
     const token = jwt.sign({ userId }, secret, { expiresIn: '2h' });
     return token;
     } catch (error){
-        throw new Error('Failed to generate token:', error);
+        console.error('Failed to generate token:', error);
+
+        throw new Error('Failed to generate token.');
     }
 }
 
@@ -20,13 +22,12 @@ export function verifyToken(token){
 
 
         const decoded = jwt.verify(token, secret); 
-        const userID = decoded.userId; // Access the user ID from the decoded payload
+        const userID = decoded.userId; 
         return userID;
 
     } catch (error) {
-        // Handle errors, such as invalid token or signature
-        throw new Error('Error decoding JWT:', error);
-        
+        console.error('Error decoding JWT:', error);
+        throw new Error('Invalid or expired token. Please log in again.');        
 
     }
 }
