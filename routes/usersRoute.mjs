@@ -1,7 +1,6 @@
 import express, { json } from "express";
 import User from "../modules/user.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
-import SuperLogger from "../modules/SuperLogger.mjs";
 import DBManager from "../modules/storageManager.mjs";
 import hash from "../modules/pswHasher.mjs";
 import { verifyToken } from "../modules/authenticator.mjs";
@@ -33,7 +32,8 @@ USER_API.get('/profile', async (req, res, next) => {
     }
     res.status(HTTPCodes.SuccesfullRespons.Ok).json(user).end();
   } catch (error) {
-    throw new Error(error);
+    console.error("Error in finding profile information, ", error)
+    throw new Error("Error in finding profile information, try logging in again");
 
   }
 
@@ -53,7 +53,8 @@ USER_API.get('/:id', async (req, res, next) => {
     }
     res.status(HTTPCodes.SuccesfullRespons.Ok).json(user).end();
   } catch (error) {
-    throw new Error(error);
+    console.error("Error in finding user by id", error)
+    throw new Error("Error in finding user by id");
 
   }
 
@@ -97,9 +98,9 @@ USER_API.post('/', async (req, res, next) => {
     res.status(HTTPCodes.SuccesfullRespons.Created).json(user).end();
     console.log("Registration successful", user, HTTPCodes.SuccesfullRespons.Created);
   } catch(error) {
-
     res.status(HTTPCodes.ServerErrorRespons.InternalError).send("Failed to register user.");
-    
+    console.error("Failed registering user: ", error)
+
   }
 
 });
@@ -145,7 +146,7 @@ USER_API.put('/edit', async (req, res) => {
   } catch(error) {
 
     res.status(HTTPCodes.ServerErrorRespons.InternalError).send("Failed to edit user.");
-    
+    console.error("Failed edit user: ", error)
   }
 
 
@@ -153,16 +154,7 @@ USER_API.put('/edit', async (req, res) => {
 });
 
 
-USER_API.put('/:id', (req, res) => {
-  /// TODO: Edit user
-  const user = new User(); //TODO: The user info comes as part of the request 
-  user.save();
-})
-USER_API.delete('/:id', (req, res) => {
-  /// TODO: Delete user.
-  const user = new User(); //TODO: Actual user
-  user.delete();
-})
+
 
 export default USER_API
 
