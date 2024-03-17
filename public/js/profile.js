@@ -2,7 +2,6 @@
 
 
 async function displayUserProfile() {
-    console.log("Display user profile is running");
 
     try {
         let token = localStorage.getItem("authToken");

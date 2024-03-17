@@ -26,13 +26,12 @@ regForm.addEventListener("submit", async function (event) {
             regForm.textContent = "SUCCESFULL REGISTRATION, GO LOG IN!";
       
         } else {
-            console.log("Registration failed:", response.statusText);
+            console.error("Registration failed:", response.statusText);
 
         }
     } catch (error) {
         console.error(error);
-
-        throw new Error ("An error occurred:", error);
+        throw new Error ("Error in creating user");
         
     }
 });

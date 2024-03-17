@@ -9,6 +9,7 @@ loginForm.addEventListener("submit", async function (event) {
   const email = loginForm.email.value;
   const password = loginForm.password.value;
   const data = { email, password };
+  
   const cfg = {
     method: "POST",
     headers: {
