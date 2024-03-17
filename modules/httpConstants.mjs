@@ -1,6 +1,5 @@
 
-// The point of this class is increasing readability and maintainability of the rest of the code. 
-// It should be extended and refactord as needed.
+
 
 class HTTPCodes {
 
@@ -27,7 +26,6 @@ class HTTPCodes {
 
 }
 
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
 const HTTPMethods = {
     POST: "POST",
     GET: "GET",
