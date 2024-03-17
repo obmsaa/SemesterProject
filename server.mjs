@@ -34,11 +34,7 @@ server.use("/recipes", RECIPE_API);
 // Telling the server to use the LOGIN_API (all urls that uses this code will have to have the /login after the base address)
 server.use("/login", LOGIN_API);
 
-// A get request handler example)
-server.get("/", (req, res, next) => {
 
-    res.status(200).send(JSON.stringify({ msg: "These are not the droids...." })).end();
-});
 
 
 // Start the server 
