@@ -1,13 +1,7 @@
 import pg from "pg"
-import SuperLogger from "./SuperLogger.mjs";
-import { HTTPCodes } from "./httpConstants.mjs";
 import hash from "./pswHasher.mjs";
-import { giveToken } from "./authenticator.mjs";
 
 
-
-
-/// TODO: is the structure / design of the DBManager as good as it could be?
 
 class DBManager {
 
@@ -22,6 +16,7 @@ class DBManager {
         const ssl = isRenderEnvironment ? { rejectUnauthorized: true } : false;
 
 
+
         this.#credentials = {
             connectionString,
             ssl
@@ -32,7 +27,7 @@ class DBManager {
 
     async findUserById(userId) {
         const client = new pg.Client(this.#credentials);
-
+        console.log(client);
         try {
           await client.connect();
           const result = await client.query('SELECT * FROM "public"."users" WHERE id = $1', [userId]);
@@ -46,7 +41,7 @@ class DBManager {
           return user;
         } catch (error) {
           console.error('Error finding user:', error);
-          throw new Error(error); // Re-throw for handling in API endpoint
+          throw new Error(`Unable to retrieve user details. Please try again later.`);
         } finally {
           await client.end();
         }
@@ -63,7 +58,7 @@ class DBManager {
             return result.rows.length > 0; // Returning true if user exists, false otherwise
         } catch (error) {
             console.error('Error checking user existence:', error);
-            throw new Error("Error: ", error);
+            throw new Error("Error in finding the user with email");
         } finally {
             await client.end();
         }
@@ -77,14 +72,13 @@ class DBManager {
 
            
             const result = await client.query('SELECT * FROM "public"."users" WHERE email = $1', [email]);
-            // console.log("console Result in storage: ", result.rows[0])
             if (result.rows.length > 0) {
                 const user = result.rows[0]; 
                 // Hashing the input password using the same method as when storing it
                 const inputHash = hash(password);
                 // Compare the input hash with the stored hash
                 if (inputHash === user.password) {
-                    console.log("Password matches, user ID:", user.id);
+                    console.log("Password matches");
                     
                   return user.id; 
                 }
@@ -92,9 +86,9 @@ class DBManager {
               
               return null; // No user found, or passwords do not match
         } catch (error) {
-            console.log(' Error checking user existence:', error.message, error.stack);
+            console.error(' Error checking user existence:', error);
 
-            throw new Error("Error: ", error);
+            throw new Error("Error in finding the user trying to log in, check correct input of email and password");
         } finally {
             await client.end();
         }
@@ -114,16 +108,15 @@ class DBManager {
             const output = await client.query('UPDATE "public"."users" SET "name" = $1, "email" = $2, "password" = $3 WHERE id = $4;', [user.name, user.email, user.password, user.id]);
 
             if (output.rowCount === 0) {
-
-                throw new Error(`No user found with ID: ${user.id}`);
-            } else {
-
-            }
+                console.error("Error in finding user with ID: " , user.id, error)
+                throw new Error(`Couldn't find the user to change, make sure you are logged in`);
+            } 
             
 
         } catch (error) {
+            console.error("Error updating the database with new user info: " + error)
+            throw Error("Error updating the database with new user info");
 
-            throw Error("Error updating the database with new user info: " + error);
         } finally {
 
             client.end(); 
@@ -143,13 +136,9 @@ class DBManager {
             await client.connect();
             const output = await client.query('Delete from "public"."Users"  where id = $1;', [user.id]);
 
-            // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
-            // Of special intrest is the rows and rowCount properties of this object.
-
-            //TODO: Did the user get deleted?
+           
 
         } catch (error) {
-            //TODO : Error handling?? Remember that this is a module seperate from your server 
         } finally {
             client.end(); // Always disconnect from the database.
         }
@@ -175,18 +164,18 @@ class DBManager {
                 user.id = output.rows[0].id;
                 return user;
             } else{
-                SuperLogger.log("User was not created. No rows returned.");
+                console.log("User was not created. No rows returned.");
             }
 
         } catch (error) {
-            SuperLogger.log("User insertion failed with error: " + error.message);
-            //TODO : Error handling?? Remember that this is a module seperate from your server 
+            console.error("User insertion failed with error: " + error);
+            throw new Error("Unable to create user")
         } finally {
             client.end(); 
-            SuperLogger.log("Database connection closed.");
+            console.log("Database connection closed.");
         }
 
-        return user;
+        
 
     }
 
@@ -208,7 +197,6 @@ class DBManager {
             }
     
             const result = await client.query(query, queryParams);
-            console.log("Result from storage: ", result)
             if (result.rows.length === 0) {
                 return []; // Return an empty array if no recipes are found
             }
@@ -216,18 +204,47 @@ class DBManager {
             
             return recipes; 
         } catch (error) {
-            throw new Error('Error finding recipes:',error); 
+            console.error('Error finding recipes:',error); 
+            throw new Error("Error finding the recipes. Make sure you are logged in if you want your own recipes")
         } finally {
             await client.end();
         }
     }
+
+    async createRecipe(recipe) {
+        const client = new pg.Client(this.#credentials);
+
+        
+        try {
+
+            await client.connect();
+
+            const result = await client.query(
+                'INSERT INTO "public"."recipes" (title, description, ingredients, instructions, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
+                [recipe.title, recipe.description, recipe.ingredients, recipe.instructions, recipe.createdBy]
+            );
+
+            if (result.rows.length > 0) {
+                const addedRecipe = result.rows[0];
+                return addedRecipe;
+            } else {
+                throw new Error("Recipe creation failed, no rows affected.");
+            }
+
+        } catch (error) {
+            console.error("Recipe insertion failed with error: " + error);
+            throw new Error("Error creating recipe, remember to fill all the fields");
+        } finally {
+            client.end(); 
+            console.log("Database connection closed.");
+        }
+
+    
+
+    }
 }
 
- // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
-            // Of special intrest is the rows and rowCount properties of this object.
-
-
-
+ 
 
 
 export default new DBManager();

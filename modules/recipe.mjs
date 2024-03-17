@@ -1,7 +1,5 @@
 
-import SuperLogger from "./SuperLogger.mjs";
 import DBManager from "./storageManager.mjs";
-import RECIPE_API from "../routes/recipeRoute.mjs";
 
 class Recipe {
   constructor({ title, description, ingredients, instructions, createdBy }) {
@@ -13,16 +11,16 @@ class Recipe {
   }
 
   async save() {
-
-    /// TODO: What happens if the DBManager fails to complete its task?
-
-    // We know that if a recipe object does not have the ID, then it cant be in the DB.
-    if (this.id == null) {
-
-      return await DBManager.createRecipe(this) ;
-
-    } else {
-      return await DBManager.updateRecipe(this);
+    if (!this.createdBy) {
+        throw new Error("Error, you log in to create a recipe.");
+    }
+    try {
+        const recipe = await DBManager.createRecipe(this);
+        console.log("Recipe created successfully:", recipe);
+        return recipe;
+    } catch (error) {
+        console.error("Failed to save recipe:", error);
+        throw new Error(`Error saving recipe the recipe `, error.message);
     }
   }
 

@@ -42,6 +42,65 @@ body {
 }
 
 
+
+#createRecipes {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffeead;
+    box-shadow: 0 0px 15px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}
+
+#createRecipes form {
+    display: flex;
+    flex-direction: column;
+}
+
+#createRecipes label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#createRecipes input[type="text"],
+#createRecipes textarea {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#createRecipes #addIngredientsDiv,
+#createRecipes #stepsDiv {
+    margin-bottom: 15px;
+}
+
+#createRecipes h3 {
+    margin-bottom: 10px;
+}
+
+#createRecipes button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+#createRecipes #submitBtn {
+    align-self: center;
+    width: auto;
+    margin-top: 10px;
+}
+
+#createRecipes button:hover {
+    background-color: #45a049;
+}
+
+
+
 footer {
     text-align: center;
     width: 100%;

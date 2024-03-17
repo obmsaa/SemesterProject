@@ -1,5 +1,4 @@
 
-import SuperLogger from "./SuperLogger.mjs";
 import DBManager from "./storageManager.mjs";
 
 
@@ -17,9 +16,8 @@ class User {
 
   async save() {
 
-    /// TODO: What happens if the DBManager fails to complete its task?
-
-    // We know that if a user object does not have the ID, then it cant be in the DB.
+   try{
+    //Depending on the inclusion of an id it will create or update user
     if (this.id == null) {
 
       return await DBManager.createUser(this) ;
@@ -28,11 +26,14 @@ class User {
       console.log("Ran update user")
       return await DBManager.updateUser(this);
     }
+  } catch(error){
+    console.error("Failed to save user:", error);
+    throw new Error(`Error saving user: `, error.message);
+  }
   }
 
   delete() {
 
-    /// TODO: What happens if the DBManager fails to complete its task?
     DBManager.deleteUser(this);
   }
 
@@ -40,3 +41,4 @@ class User {
 }
 
 export default User;
+
