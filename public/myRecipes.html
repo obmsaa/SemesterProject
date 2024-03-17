@@ -11,7 +11,39 @@
 </head>
 <body>
    
-    <h1 id="pageTitle">Browse your Recipes</h1>
+    <h1 id="pageTitle">Browse and Create your Recipes</h1>
+
+    <div id="createRecipes">
+        <form id="recipeForm">
+            <label for="addRecipeTitle">Recipe Title:</label>
+            <input type="text" id="addRecipeTitle" name="title">
+        
+            <label for="addDesc">Description:</label>
+            <textarea id="addDesc" name="description"></textarea>
+        
+            <div id="addIngredientsDiv">
+                <h3>Ingredients</h3>
+                <p>Add only one ingredient pr box</p>
+                <button type="button" id="addIngredientBtn">Add Ingredient</button>
+                <input type="text" class="addIngredient" >
+
+            </div>
+        
+            <div id="stepsDiv">
+                <h3>Instructions</h3>
+                <p>Add only one instruction pr box</p>
+
+                <button type="button" id="addStepBtn">Add Step</button>
+                <input type="text" class="addStep" >
+
+            </div>
+        <div id="saveRecipe">
+            <button id="submitBtn" type="submit">Save recipe</button>
+        </div>
+        </form>
+    
+        </div>
+
 
     <div id="main">
         <div id="recipe-container">
@@ -19,9 +51,6 @@
         </div>
     </div>
 
-    
-
-    
 </body>
 
 <footer>
