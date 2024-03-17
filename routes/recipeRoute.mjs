@@ -1,7 +1,6 @@
 import express, { json } from "express";
 import Recipe from "../modules/recipe.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
-import SuperLogger from "../modules/SuperLogger.mjs";
 import DBManager from "../modules/storageManager.mjs";
 import { verifyToken } from "../modules/authenticator.mjs";
 
@@ -31,6 +30,8 @@ RECIPE_API.get('/user/recipes', async (req, res, next) => {
   const userID = verifyToken(token);
   console.log(userID)
 
+
+
   try {
     const recipes = await DBManager.findRecipes(userID);
     res.status(HTTPCodes.SuccesfullRespons.Ok).json(recipes);
@@ -44,21 +45,33 @@ RECIPE_API.get('/user/recipes', async (req, res, next) => {
 RECIPE_API.post('/', async (req, res, next) => { 
 
   
+  const token = req.headers.authorization;
+  console.log(token)
+  const userID = verifyToken(token);
+  console.log(userID);
+
+  if (!userID) {
+    return res.status(HTTPCodes.ClientSideErrorRespons.Unauthorized).send("Invalid or expired token");
+}
+
+const { title, description, ingredients, instructions } = req.body;
+const recipe = new Recipe({ title, 
+  description, 
+  ingredients: ingredients, 
+  instructions:instructions,
+   createdBy: userID });
+  try {
+     await recipe.save();
+    res.status(HTTPCodes.SuccesfullRespons.Ok).json(recipe).end();
+  } catch (error) {
+    res.status(HTTPCodes.ServerErrorRespons.InternalError).send('Could not create recipe.');
+  }
+  
 
 });
 
 
-RECIPE_API.put('/:id', (req, res) => {
-  /// TODO: Edit recipe
-  const recipe = new Recipe(); //TODO: The recipe info comes as part of the request 
-  recipe.save();
-})
 
-RECIPE_API.delete('/:id', (req, res) => {
-  /// TODO: Delete recipe.
-  const recipe = new Recipe(); //TODO: Actual recipe
-  recipe.delete();
-})
 
 export default RECIPE_API
 
